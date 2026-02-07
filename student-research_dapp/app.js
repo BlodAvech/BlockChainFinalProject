@@ -18,13 +18,9 @@ const ResearchDApp = {
 
     this.initEventListeners();
 
-    // If already connected
     const accounts = await window.ethereum.request({ method: "eth_accounts" });
-    if (accounts.length > 0) {
-      await this.connectWallet();
-    } else {
-      this.renderDisconnectedState();
-    }
+    if (accounts.length > 0) await this.connectWallet();
+    else this.renderDisconnectedState();
   },
 
   initEventListeners() {
@@ -139,6 +135,30 @@ const ResearchDApp = {
     document.getElementById("myContributions").innerHTML = '<p class="info-text">Connect wallet to see your contributions</p>';
   },
 
+  formatBigCompact(bn) {
+    const b = ethers.BigNumber.from(bn);
+    if (b.isZero()) return "0";
+
+    const thousand = ethers.BigNumber.from("1000");
+    const million = ethers.BigNumber.from("1000000");
+    const billion = ethers.BigNumber.from("1000000000");
+    const trillion = ethers.BigNumber.from("1000000000000");
+
+    const format = (divisor, suffix) => {
+      const scaled = b.mul(100).div(divisor);
+      const intPart = scaled.div(100).toString();
+      const frac = scaled.mod(100).toString().padStart(2, "0");
+      return `${intPart}.${frac}${suffix}`;
+    };
+
+    if (b.gte(trillion)) return format(trillion, "T");
+    if (b.gte(billion)) return format(billion, "B");
+    if (b.gte(million)) return format(million, "M");
+    if (b.gte(thousand)) return format(thousand, "K");
+
+    return b.toString();
+  },
+
   async createProject() {
     if (!this.userAddress) return this.notify("Connect wallet first", "error");
     if (!ALLOWED_TESTNETS[this.chainId]) return this.notify("Switch to a testnet first", "warning");
@@ -191,7 +211,6 @@ const ResearchDApp = {
 
       let html = "";
 
-      // IMPORTANT: project IDs start from 1
       for (let id = 1; id <= count; id++) {
         const p = await this.contracts.researchPlatform.projects(id);
 
@@ -204,6 +223,8 @@ const ResearchDApp = {
         const progress = goal > 0 ? (raised / goal) * 100 : 0;
 
         const daysLeft = Math.max(0, Math.ceil((deadline * 1000 - Date.now()) / (1000 * 60 * 60 * 24)));
+
+        const totalSharesPretty = this.formatBigCompact(p.totalShares);
 
         html += `
           <div class="project-card">
@@ -219,7 +240,7 @@ const ResearchDApp = {
               <p><strong>Goal:</strong> ${goal.toFixed(3)} ETH</p>
               <p><strong>Raised:</strong> ${raised.toFixed(3)} ETH (${progress.toFixed(1)}%)</p>
               <p><strong>Valuation:</strong> ${parseFloat(ethers.utils.formatEther(p.valuation)).toFixed(3)} ETH</p>
-              <p><strong>Total Shares:</strong> ${p.totalShares.toString()}</p>
+              <p><strong>Total Shares:</strong> ${totalSharesPretty}</p>
             </div>
 
             <div class="progress-bar">
@@ -260,21 +281,18 @@ const ResearchDApp = {
       let html = "";
       let has = false;
 
-      // IMPORTANT: IDs start from 1
       for (let id = 1; id <= count; id++) {
         const userSharesBN = await this.contracts.researchPlatform.shares(id, this.userAddress);
-
-        // If shares can be huge, don't use toNumber() blindly. Convert to string:
-        const userSharesStr = userSharesBN.toString();
-        if (userSharesStr !== "0") {
+        if (!userSharesBN.isZero()) {
           has = true;
           const p = await this.contracts.researchPlatform.projects(id);
+          const userSharesPretty = this.formatBigCompact(userSharesBN);
 
           html += `
             <div class="contribution-item">
               <h4>${p.title}</h4>
               <p><strong>Project ID:</strong> ${id}</p>
-              <p><strong>Your Shares:</strong> ${userSharesStr}</p>
+              <p><strong>Your Shares:</strong> ${userSharesPretty}</p>
               <p><strong>Valuation:</strong> ${parseFloat(ethers.utils.formatEther(p.valuation)).toFixed(3)} ETH</p>
             </div>
           `;
@@ -293,7 +311,6 @@ const ResearchDApp = {
 
     this.selectedProjectId = parseInt(projectId, 10);
 
-    // Optional: show project info inside modal
     const info = document.getElementById("modalProjectInfo");
     info.innerHTML = `<p><strong>Project ID:</strong> ${this.selectedProjectId}</p>`;
 
@@ -318,10 +335,7 @@ const ResearchDApp = {
 
       const amountWei = ethers.utils.parseEther(String(amountEth));
 
-      const tx = await this.contracts.researchPlatform.contribute(this.selectedProjectId, {
-        value: amountWei
-      });
-
+      const tx = await this.contracts.researchPlatform.contribute(this.selectedProjectId, { value: amountWei });
       await tx.wait();
 
       this.hideModal();
