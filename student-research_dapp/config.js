@@ -1,10 +1,10 @@
 // === PUT YOUR DEPLOYED ADDRESSES HERE ===
 const CONTRACT_CONFIG = {
   researchPlatform: {
-    address: "0x5409a82d30DCD8625e0eD2f13E8Cb9cD3323bCAf"
+    address: "0x2a95148B6d7EbD3F9DE69F53056c233B1258CF44"
   },
   researchToken: {
-    address: "0x5820e9829Ffd7E13a551418b2A8f63277eaa65A9"
+    address: "0x75c465c8d1a79e13d4Af2a45539DB1F37384eBEe"
   }
 };
 
