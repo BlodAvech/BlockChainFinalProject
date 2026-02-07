@@ -1,86 +1,85 @@
-\<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Student Research Support DApp</title>
-    <link rel="stylesheet" href="styles.css">
-    <!-- Load ethers.js from CDN -->
-    <script src="https://cdn.ethers.io/lib/ethers-5.7.umd.min.js"></script>
-    <!-- Load Web3.js as fallback -->
-    <script src="https://cdn.jsdelivr.net/npm/web3@1.7.4/dist/web3.min.js"></script>
-</head>
-<body>
+    <link rel="stylesheet" href="styles.css" />
+
+    <!-- ethers v5 -->
+    <!-- <script src="https://cdn.ethers.io/lib/ethers-5.7.umd.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+
+    </head>
+
+    <body>
     <div class="container">
-        <!-- Header Section -->
         <header>
-            <h1>🎓 Student Research Support DApp</h1>
-            <div class="wallet-info">
-                <button id="connectWallet">Connect MetaMask</button>
-                <button id="getTestEth" class="btn-secondary">Get Test ETH</button>
-                <div id="walletDetails" class="hidden">
-                    <p><strong>Connected:</strong> <span id="walletAddress"></span></p>
-                    <p><strong>Balance:</strong> <span id="ethBalance">0</span> ETH</p>
-                    <p><strong>Tokens:</strong> <span id="tokenBalance">0</span> SRT</p>
-                </div>
-                <div id="networkInfo" class="hidden">
-                    <p>Network: <span id="networkName"></span></p>
-                </div>
+        <h1>Student Research Support DApp</h1>
+
+        <div class="wallet-info">
+            <button id="connectWallet">Connect MetaMask</button>
+            <button id="getTestEth" class="btn-secondary">Get Test ETH</button>
+
+            <div id="walletDetails" class="hidden">
+            <p><strong>Connected:</strong> <span id="walletAddress"></span></p>
+            <p><strong>Balance:</strong> <span id="ethBalance">0</span> ETH</p>
+            <p><strong>Tokens:</strong> <span id="tokenBalance">0</span> RT</p>
             </div>
+
+            <div id="networkInfo" class="hidden">
+            <p>Network: <span id="networkName"></span></p>
+            </div>
+        </div>
         </header>
 
-        <!-- Main Content -->
         <main>
-            <!-- Create Project Section -->
-            <section class="section-box">
-                <h2>Create Research Project</h2>
-                <div class="form-group">
-                    <input type="text" id="projectTitle" placeholder="Project Title" class="input-field">
-                    <input type="number" id="fundingGoal" placeholder="Funding Goal (ETH)" class="input-field">
-                    <input type="number" id="campaignDays" placeholder="Duration (days)" class="input-field">
-                    <button id="createProject" class="btn-primary">Create Project</button>
-                </div>
-            </section>
-
-            <!-- Active Projects Section -->
-            <section class="section-box">
-                <h2>Active Research Projects</h2>
-                <div id="projectsList" class="projects-grid">
-                    <!-- Projects will be loaded here -->
-                    <div class="loading">Connect wallet to load projects...</div>
-                </div>
-            </section>
-
-            <!-- My Contributions Section -->
-            <section class="section-box">
-                <h2>My Contributions</h2>
-                <div id="myContributions">
-                    <p class="info-text">Connect wallet to see your contributions</p>
-                </div>
-            </section>
-
-            <!-- Support Project Modal -->
-            <div id="supportModal" class="modal hidden">
-                <div class="modal-content">
-                    <span class="close">&times;</span>
-                    <h3>Support Research Project</h3>
-                    <div id="modalProjectInfo"></div>
-                    <div class="form-group">
-                        <input type="number" id="supportAmount" placeholder="Amount in ETH" class="input-field" min="0.001" step="0.001">
-                        <button id="confirmSupport" class="btn-primary">Support Project</button>
-                    </div>
-                </div>
+        <section class="section-box">
+            <h2>Create Research Project</h2>
+            <div class="form-group">
+            <input type="text" id="projectTitle" placeholder="Project Title" class="input-field" />
+            <input type="number" id="fundingGoal" placeholder="Funding Goal (ETH)" class="input-field" />
+            <input type="number" id="campaignDays" placeholder="Duration (days)" class="input-field" />
+            <button id="createProject" class="btn-primary">Create Project</button>
             </div>
+        </section>
+
+        <section class="section-box">
+            <h2>Active Research Projects</h2>
+            <div id="projectsList" class="projects-grid">
+            <div class="loading">Connect wallet to load projects...</div>
+            </div>
+        </section>
+
+        <section class="section-box">
+            <h2>My Contributions</h2>
+            <div id="myContributions">
+            <p class="info-text">Connect wallet to see your contributions</p>
+            </div>
+        </section>
+
+        <!-- Modal -->
+        <div id="supportModal" class="modal">
+            <div class="modal-content">
+            <span class="close">&times;</span>
+            <h3>Support Research Project</h3>
+
+            <div id="modalProjectInfo" class="modal-project-info"></div>
+
+            <div class="form-group">
+                <input type="number" id="supportAmount" placeholder="Amount in ETH" class="input-field" min="0.001" step="0.001" />
+                <button id="confirmSupport" class="btn-primary">Support Project</button>
+            </div>
+            </div>
+        </div>
         </main>
 
-        <!-- Footer -->
         <footer>
-            <p>Blockchain 1 Final Project - Test Network Only</p>
-            <p>Using test ETH only - No real cryptocurrency</p>
+        <p>Blockchain 1 Final Project - Test Network Only</p>
+        <p>Using test ETH only - No real cryptocurrency</p>
         </footer>
     </div>
 
-    <!-- JavaScript Files -->
     <script src="config.js"></script>
     <script src="app.js"></script>
 </body>
