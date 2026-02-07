@@ -76,7 +76,7 @@ contract ResearchPlatform
         require(msg.value > 0 , "Send ETH");
         require(!project.finalized , "Finalized");
 
-        contributions[projectID][msg.sender] == msg.value;
+        contributions[projectID][msg.sender] += msg.value;
         project.totalRaised += msg.value;
 
         uint256 newShares = msg.value * SHARE_RATE;
@@ -122,7 +122,8 @@ contract ResearchPlatform
         uint256 amount = project.totalRaised;
         project.totalRaised = 0;
 
-        payable(msg.sender).transfer(amount);
+        (bool success, ) = payable(msg.sender).call{value: amount}("");
+        require(success, "ETH transfer failed");
     }
 
     function refund(uint256 projectID) external {
@@ -137,7 +138,8 @@ contract ResearchPlatform
         contributions[projectID][msg.sender] = 0;
         shares[projectID][msg.sender] = 0;
 
-        payable (msg.sender).transfer(contributed);
+        (bool success, ) = payable(msg.sender).call{value: contributed}("");
+        require(success, "ETH transfer failed");
     }
 
     function getSharedPrice(uint256 projectID) external view returns (uint256) {
