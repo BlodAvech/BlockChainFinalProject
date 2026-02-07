@@ -10,8 +10,8 @@ contract ResearchToken is ERC20 , Ownable
 
 	constructor() ERC20("ResearchToken" , "RT") Ownable(msg.sender){}
 
-	function setPlatform(address _platfrom) external onlyOwner {
-		platform = _platfrom;
+	function setPlatform(address _platform) external onlyOwner {
+		platform = _platform;
 	}
 
 	function mint(address to , uint256 amount) external 
